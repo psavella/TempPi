@@ -2,6 +2,7 @@
 #!/usr/bin/python
 #pins +=pin2   out=pin11  -=pin6
 import sys
+import os
 import json
 import Adafruit_DHT
 from datetime import datetime
@@ -21,6 +22,7 @@ def getTemp():
     		print ("Humidity = {} %; Temperature = {} F".format(humidity, temperature), dateTime)
 		data = formatJson(deviceId,SensorId,dateTime,temperature,humidity)
                 result = postData(data)
+                print(json.dumps(data))
                 if result == 200:
                     with open(fileName) as f:
                         line = f.readline().strip()
@@ -31,6 +33,7 @@ def getTemp():
                             line = f.readline().strip()
                         try:
                             os.remove(fileName)
+                            print("file deleted")
                         except OSError:
                             pass
                     print("success")
