@@ -19,7 +19,13 @@ def getTemp():
     		temperature = (temperature * (1.8)) + 32
     		print ("Humidity = {} %; Temperature = {} F".format(humidity, temperature), dateTime)
 		json = formatJson(deviceId,SensorId,dateTime,temperature,humidity)
-		postData(json)
+                result = postData(json)
+                if(result == 200){
+                    print("success")
+                }
+                else{
+                        print("failed")
+                }
                 time.sleep(600)
 
 getTemp()
