@@ -4,6 +4,7 @@
 import sys
 import os
 import json
+import urllib2
 import Adafruit_DHT
 from datetime import datetime
 import time
@@ -19,30 +20,53 @@ def getTemp():
                 dateTime = datetime.now()
     		humidity, temperature = Adafruit_DHT.read_retry(11, 17)
     		temperature = (temperature * (1.8)) + 32
-    		print ("Humidity = {} %; Temperature = {} F".format(humidity, temperature), dateTime)
 		data = formatJson(deviceId,SensorId,dateTime,temperature,humidity)
-                result = postData(data)
-                print(json.dumps(data))
-                if result == 200:
-                    with open(fileName) as f:
-                        line = f.readline().strip()
-                        while line:
-                            print(line)
-                            payload = json.loads(line)
-                            postData(payload)
+                
+                #calls checkWifi, returns true if wifi is enabled
+                if checkWifi() == True:
+                    
+                    #returns result of api call, returns 0 if api not reached, posts data if it is reached
+                    result = postData(data)
+                    print(json.dumps(data))
+
+                    if result == 200:
+                        
+                        #opens file with name "usbdrv/storage.txt", or creates it
+                        with open(fileName,"a+") as f:
+                            #reads first line of file
                             line = f.readline().strip()
-                        try:
-                            os.remove(fileName)
-                            print("file deleted")
-                        except OSError:
-                            pass
-                    print("success")
+                            while line:
+                                #if there is still a line, line is convertaed to json and posted
+                                payload = json.loads(line)
+                                postData(payload)
+                                line = f.readline().strip()
+                            #after loop, os tries to remove file (fails if file does not exist)    
+                            try:
+                                os.remove(fileName)
+                                print("file deleted")
+                            except OSError:
+                                pass
+                        print("success")
+                    #if result is not 200, api must be down, payload is stored locally
+                    else:
+                        f = open(fileName,"a+")
+                        f.write(json.dumps(data) + "\r\n")
+                        f.close()
+                        print("temp data stored because failed API connect")
+                #if wif is not enabled, payload is stored locally
                 else:
                     f = open(fileName,"a+")
                     f.write(json.dumps(data) + "\r\n")
                     f.close()
-                    print("failed")
-                
-                time.sleep(60)
+                    print("temp data stored because failed wifi connect")
+                time.sleep(30)
+
+def checkWifi():
+    try:
+        #checks if url can be reached
+        urllib2.urlopen("http://184.72.116.35:4200", timeout=1)
+        return True
+    except urllib2.URLError as err:
+        return False
 
 getTemp()
