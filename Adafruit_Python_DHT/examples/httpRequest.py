@@ -1,11 +1,12 @@
 import requests
 #import json
 
-urlPost ="http://34.239.113.101:8080/demo/addTemp"
+urlPost ="http://184.72.116.35:8080/demo/addTemp"
 urlLocal ="http://192.168.0.110:8080/demo/addTemp" 
 
 def postData(json_Data):
-        r = requests.post(urlLocal,json= json_Data)
+    try:
+        r = requests.post(urlPost,json= json_Data)
         
 	print("in Post")
 	if r.status_code == requests.codes.ok:
@@ -15,7 +16,9 @@ def postData(json_Data):
 	else:
 		print("Not OK")
                 print(str(r.status_code))
-		return r.status_code
+	        return r.status_code
+    except:
+        return 0
 
 def formatJson(piId,sensorId, dateTime, temperature, humidity):
 
