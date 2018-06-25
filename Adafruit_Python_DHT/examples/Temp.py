@@ -10,6 +10,7 @@ from httpRequest import postData
 
 deviceId = "tempPi1"
 SensorId = "Temp1"
+fileName = "storedData.txt"
 
 
 def getTemp():
@@ -20,12 +21,15 @@ def getTemp():
     		print ("Humidity = {} %; Temperature = {} F".format(humidity, temperature), dateTime)
 		json = formatJson(deviceId,SensorId,dateTime,temperature,humidity)
                 result = postData(json)
-                if(result == 200){
+                if result == 200:
                     print("success")
-                }
-                else{
-                        print("failed")
-                }
+                    file = open(fileName,"a+")
+                    f.write("success \r\n")
+                else:
+                    print("failed")
+                    file = open(fileName,"a+")
+                    f.write("failed \r\n")
+                file.close()
                 time.sleep(600)
 
 getTemp()
