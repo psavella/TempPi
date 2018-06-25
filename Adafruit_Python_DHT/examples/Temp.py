@@ -59,7 +59,7 @@ def getTemp():
                     f.write(json.dumps(data) + "\r\n")
                     f.close()
                     print("temp data stored because failed wifi connect")
-                time.sleep(30)
+                time.sleep(600)
 
 def checkWifi():
     try:
