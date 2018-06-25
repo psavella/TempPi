@@ -10,8 +10,7 @@ from httpRequest import postData
 
 deviceId = "tempPi1"
 SensorId = "Temp1"
-fileName = "storedData.txt"
-
+fileName = "../../../usbdrv/storage.txt"
 
 def getTemp():
 	while True:
