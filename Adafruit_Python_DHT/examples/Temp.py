@@ -67,12 +67,12 @@ def getTemp():
                         f.write(json.dumps(data) + "\r\n")
                         f.close()
                     print("temp data stored because failed wifi connect")
-                time.sleep(10)
+                time.sleep(600)
 
 def checkWifi():
     try:
         #checks if url can be reached
-        urllib2.urlopen("http://18.204.21.212:4200", timeout=1)
+        urllib2.urlopen("http://54.210.23.150:4200", timeout=1)
         return True
     except urllib2.URLError as err:
         return False

@@ -1,7 +1,7 @@
 import requests
 #import json
 
-urlPost ="http://18.204.21.212:8080/demo/addTemp"
+urlPost ="http://54.210.23.150:8080/demo/addTemp"
 urlLocal ="http://192.168.0.110:8080/demo/addTemp" 
 
 def postData(json_Data):
