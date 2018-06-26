@@ -45,15 +45,15 @@ def getTemp():
                                 line = f.readline().strip()
                             #after loop, os tries to remove file (fails if file does not exist)    
                             f.close()
-                            try:
-                                os.remove(fileName)
-                                print("file deleted")
-                            except OSError:
-                                pass
+                        try:
+                            os.remove(fileName)
+                            print("file deleted")
+                        except OSError:
+                            pass
                         print("success")
                     #if result is not 200, api must be down, payload is stored locally
                     else:
-                        with FIleLock(fileName):
+                        with FileLock(fileName):
                             print("file locked")
                             f = open(fileName,"a+")
                             f.write(json.dumps(data) + "\r\n")
