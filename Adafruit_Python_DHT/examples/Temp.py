@@ -72,7 +72,7 @@ def getTemp():
 def checkWifi():
     try:
         #checks if url can be reached
-        urllib2.urlopen("http://184.72.116.35:4200", timeout=1)
+        urllib2.urlopen("http://18.204.21.212:4200", timeout=1)
         return True
     except urllib2.URLError as err:
         return False
