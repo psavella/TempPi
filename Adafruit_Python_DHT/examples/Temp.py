@@ -53,7 +53,7 @@ def getTemp():
                         print("success")
                     #if result is not 200, api must be down, payload is stored locally
                     else:
-                        with FIleLock(fileName):
+                        with FileLock(fileName):
                             print("file locked")
                             f = open(fileName,"a+")
                             f.write(json.dumps(data) + "\r\n")
