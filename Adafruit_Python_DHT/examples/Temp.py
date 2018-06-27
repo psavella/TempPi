@@ -7,13 +7,15 @@ import json
 import urllib2
 import Adafruit_DHT
 from datetime import datetime
+from filelock import FileLock
 import time
 from httpRequest import formatJson
 from httpRequest import postData
 
 deviceId = "tempPi1"
 SensorId = "Temp1"
-fileName = "usbdrv/storage.txt"
+fileLockName = "/home/pi/usbdrv/storage.txt"
+fileName = "/usbdrv/storage.txt"
 
 def getTemp():
 	while True:
@@ -32,8 +34,10 @@ def getTemp():
                     if result == 200:
                         
                         #opens file with name "usbdrv/storage.txt", or creates it
-                        with open(fileName,"a+") as f:
+                        with FileLock(fileLockName):
+                            print("file locked")
                             #reads first line of file
+                            f = open(fileLockName,"a+")
                             line = f.readline().strip()
                             while line:
                                 #if there is still a line, line is convertaed to json and posted
@@ -41,30 +45,35 @@ def getTemp():
                                 postData(payload)
                                 line = f.readline().strip()
                             #after loop, os tries to remove file (fails if file does not exist)    
-                            try:
-                                os.remove(fileName)
-                                print("file deleted")
-                            except OSError:
-                                pass
+                            f.close()
+                        try:
+                            os.remove(fileLockName)
+                            print("file deleted")
+                        except OSError:
+                            pass
                         print("success")
                     #if result is not 200, api must be down, payload is stored locally
                     else:
-                        f = open(fileName,"a+")
-                        f.write(json.dumps(data) + "\r\n")
-                        f.close()
+                        with FileLock(fileLockName):
+                            print("file locked")
+                            f = open(fileLockName,"a+")
+                            f.write(json.dumps(data) + "\r\n")
+                            f.close()
                         print("temp data stored because failed API connect")
                 #if wif is not enabled, payload is stored locally
                 else:
-                    f = open(fileName,"a+")
-                    f.write(json.dumps(data) + "\r\n")
-                    f.close()
+                    with FileLock(fileLockName):
+                        print("file locked")
+                        f = open(fileLockName,"a+")
+                        f.write(json.dumps(data) + "\r\n")
+                        f.close()
                     print("temp data stored because failed wifi connect")
                 time.sleep(600)
 
 def checkWifi():
     try:
         #checks if url can be reached
-        urllib2.urlopen("http://184.72.116.35:4200", timeout=1)
+        urllib2.urlopen("http://54.210.23.150:4200", timeout=1)
         return True
     except urllib2.URLError as err:
         return False
